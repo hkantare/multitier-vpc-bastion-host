@@ -78,6 +78,7 @@ resource "ibm_is_subnet" "frontend_subnet" {
   ipv4_cidr_block = var.frontend_cidr_blocks[count.index]
   #network_acl     = "${ibm_is_network_acl.multizone_acl.id}"
   public_gateway = ibm_is_public_gateway.repo_gateway[count.index].id
+  resource_group            = data.ibm_resource_group.all_rg.id
   depends_on     = [ibm_is_vpc_address_prefix.frontend_subnet_prefix]
 }
 
@@ -90,6 +91,7 @@ resource "ibm_is_subnet" "backend_subnet" {
   ipv4_cidr_block = var.backend_cidr_blocks[count.index]
   #network_acl     = "${ibm_is_network_acl.multizone_acl.id}"
   public_gateway = ibm_is_public_gateway.repo_gateway[count.index].id
+  resource_group            = data.ibm_resource_group.all_rg.id
   depends_on     = [ibm_is_vpc_address_prefix.backend_subnet_prefix]
 }
 
@@ -103,7 +105,7 @@ resource "ibm_is_public_gateway" "repo_gateway" {
   name  = "${var.unique_id}-public-gtw-${count.index}"
   vpc   = ibm_is_vpc.vpc.id
   zone  = "${var.ibm_region}-${count.index % 3 + 1}"
-
+  resource_group            = data.ibm_resource_group.all_rg.id
   //User can configure timeouts
   timeouts {
     create = "90m"
